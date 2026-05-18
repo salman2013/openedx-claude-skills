@@ -15,11 +15,8 @@ Migrate an Open edX Python package from legacy tooling (pip-tools, setup.cfg/set
 
 ## Installation
 
-```bash
-/plugin marketplace add https://github.com/salman2013/openedx-claude-skills
-```
+Clone the repo and load it directly:
 
-Or load locally:
 ```bash
 claude --plugin-dir ./openedx-claude-skills
 ```
