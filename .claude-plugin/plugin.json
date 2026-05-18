@@ -1,0 +1,6 @@
+{
+  "name": "openedx-claude-skills",
+  "description": "Claude Code skills for Open edX development",
+  "version": "1.0.0",
+  "author": { "name": "salman2013" }
+}
