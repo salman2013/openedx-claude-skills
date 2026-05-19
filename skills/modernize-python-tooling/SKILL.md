@@ -24,6 +24,9 @@ The openedx org is standardizing Python tooling. Reference implementation: `open
 
 Work through the three phases in order. At the start, read existing `setup.cfg`, `setup.py`, `pyproject.toml`, `tox.ini`, `Makefile`, `requirements/*.in`, and `.github/workflows/*.yml` to understand current state before making changes.
 
+**CRITICAL — assess before touching anything:**
+Before making any change, compare the current state of each file against the phase checklist. For every item, mark it as already done or missing. Only implement what is genuinely missing. Never modify a file that already satisfies its phase requirement. If the user asks why you are changing a working file, stop and explain — do not proceed without their confirmation.
+
 ---
 
 ### Phase 1 — Consolidate metadata into `pyproject.toml`
@@ -123,6 +126,9 @@ Use conventional commit format. Do not squash phases into a single commit.
 - Do NOT set `root` in `[tool.setuptools_scm]` (unlike sample-plugin which needs it for subdirectory layout).
 - Do NOT set `minor_tags` in `[tool.semantic_release]` unless the user explicitly requests it.
 - Always read the current state of files before modifying them.
+- **Never touch a file that already satisfies its phase requirement.** If something is already implemented correctly, skip it entirely — do not rewrite, reformat, or "improve" it.
+- **Never modify an existing working file** (e.g. `release.yml`, `ci.yml`, `pyproject.toml` sections) unless (a) it is missing a specific checklist item, or (b) the user explicitly asks for a change. When in doubt, ask first.
+- If the repo already has `uv.lock`, do not run `uv lock` unless the `pyproject.toml` dependencies actually changed as part of this migration. Re-running `uv lock` unnecessarily can downgrade pinned package versions.
 - `license` must use SPDX string format (PEP 639): `license = "AGPL-3.0"` + `license-files = ["LICENSE.txt"]` — NOT the old `license = { text = "..." }` inline table.
 - `[tool.setuptools_scm]` must include `version_scheme = "only-version"` and `local_scheme = "no-local-version"` — the local scheme prevents dirty version suffixes from being rejected by PyPI.
 - `[tool.uv]` must include `package = true` to explicitly mark the project as a package (not a bare workspace root).
