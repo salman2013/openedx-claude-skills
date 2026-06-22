@@ -78,13 +78,17 @@ Before making any change, compare the current state of each file against the pha
 
 1. Add `[tool.semantic_release]` to `pyproject.toml`:
    - Set `version_toml` to point at `[project].version` (but version is dynamic via setuptools-scm — use `build_command` to set `SETUPTOOLS_SCM_PRETEND_VERSION`)
-   - `build_command`: must export `SETUPTOOLS_SCM_PRETEND_VERSION` before building
+   - `build_command`: must use `python -m build` (not `uv build`) — `python-semantic-release` does not have uv available in its action environment:
+     ```
+     build_command = "python -m pip install --upgrade build && SETUPTOOLS_SCM_PRETEND_VERSION=$NEW_VERSION python -m build"
+     ```
    - Do NOT override `minor_tags` unless explicitly required
 2. Create `.github/workflows/release.yml` with this exact structure:
    - `run_tests` job: `uses: ./.github/workflows/python-tests.yml` (reusable — no inline matrix)
    - `release` job (`needs: run_tests`, `if: github.ref_name == 'main'`):
      - `concurrency` with `cancel-in-progress: false`
      - Checkout with `ref: ${{ github.ref_name }}` + `git reset --hard ${{ github.sha }}`
+     - **No `setup-uv` step** — PSR's action environment does not use uv; `build_command` installs `build` via pip
      - PSR action: `python-semantic-release/python-semantic-release@v10.5.3`
      - PSR params: `git_committer_name`, `git_committer_email`, `changelog: "false"`
      - Upload built `dist/` as GitHub Actions artifact
@@ -125,6 +129,7 @@ Use conventional commit format. Do not squash phases into a single commit.
 - If new framework version drops older Python, bump `requires-python` and remove that Python from tox envlist.
 - Do NOT set `root` in `[tool.setuptools_scm]` (unlike sample-plugin which needs it for subdirectory layout).
 - Do NOT set `minor_tags` in `[tool.semantic_release]` unless the user explicitly requests it.
+- `build_command` in `[tool.semantic_release]` must use `python -m build`, never `uv build`. The `python-semantic-release` action does not have uv available. Install the `build` package via pip inside the command itself. Do NOT add a `setup-uv` step to `release.yml`. (Fix from openedx/XBlock#928, released as XBlock 6.3.0.)
 - Always read the current state of files before modifying them.
 - **Never touch a file that already satisfies its phase requirement.** If something is already implemented correctly, skip it entirely — do not rewrite, reformat, or "improve" it.
 - **Never modify an existing working file** (e.g. `release.yml`, `ci.yml`, `pyproject.toml` sections) unless (a) it is missing a specific checklist item, or (b) the user explicitly asks for a change. When in doubt, ask first.
