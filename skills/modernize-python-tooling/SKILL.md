@@ -508,6 +508,13 @@ Skip if `src/<package>/` already exists.
 
 ---
 
+## Handling reviewer feedback
+
+- **No speculative code during a batch fix.** Don't add anything "for consistency" or "just in case" as a side effect of a requested change, especially across sibling files. If one file differs from its siblings, check that file's review threads first — the difference may be a decision a reviewer already made. (openedx-platform#38915: a `GITHUB_PATH` line removed after review came back while fixing 12 other workflow files.)
+- **Re-check resolved threads before asking for re-review.** After new commits, re-diff every file with a resolved thread against what that thread concluded. A later edit can silently undo an earlier fix, and later review rounds tend to check only new comments.
+
+---
+
 ## Committing
 
 One commit per phase, conventional format:
@@ -576,4 +583,8 @@ Phase 4
 [ ] MANIFEST.in paths updated
 [ ] uv.lock regenerated
 [ ] uv run tox -e quality passes
+
+Review rounds
+[ ] No unrequested "for consistency" or "just in case" changes in the latest commits
+[ ] Every file with a resolved review thread re-diffed against what the thread concluded
 ```
