@@ -6,7 +6,7 @@ Claude Code skills for Open edX development.
 
 ### `modernize-python-tooling`
 
-Migrate an Open edX Python package from legacy tooling (pip-tools, setup.cfg/setup.py) to modern tooling (uv, pyproject.toml PEP 621/735, python-semantic-release, src layout).
+Migrate an Open edX Python package or platform repo from legacy tooling (pip-tools, setup.cfg/setup.py) to modern tooling (uv, pyproject.toml PEP 621/735, python-semantic-release, src layout).
 
 **Usage:**
 ```
@@ -81,6 +81,15 @@ Optional; skipped if `src/<package>/` already exists. Moves the package into `sr
 | `tox.ini` / `Makefile` | Filesystem paths updated to `src/<package>/...` |
 | `MANIFEST.in` | Paths updated to `src/<package>/...` |
 | `uv.lock` | Regenerated |
+
+---
+
+#### Handling reviewer feedback
+
+Applies throughout all phases, not just at the end.
+
+- No speculative "for consistency" changes during a batch fix — if a sibling file differs from the others, check its review threads first; the difference may be a decision a reviewer already made.
+- Re-diff every file with a resolved review thread against what that thread concluded before requesting re-review — a later edit can silently undo an earlier fix.
 
 ---
 
